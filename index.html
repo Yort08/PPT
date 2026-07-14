@@ -780,6 +780,13 @@
       fill: var(--color-chalk-white);
     }
 
+    .prompt-image-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
     .prompt-text {
       flex: 1;
       margin-left: 2rem;
@@ -1657,8 +1664,9 @@
           <div class="classroom-grid-2">
             <div class="classroom-card">
               <h3 style="color: var(--color-red); margin-bottom: 0.8rem; font-size: 1.4rem;">📖 DLP Setup</h3>
-              <p class="classroom-desc" style="margin-bottom: 0.5rem;"><strong>Topic:</strong> Sentences According to Structure.</p>
-              <p class="classroom-desc"><strong>Methodology:</strong> Inductive lesson path using picture prompt materials to guide students in formulating rules.</p>
+              <p class="classroom-desc">
+                A detailed lesson plan (DLP) serves as a teacher’s roadmap, containing a step-by-step description of activities to teach a specific topic.
+              </p>
             </div>
             <div class="classroom-card">
               <h3 style="color: var(--color-green); margin-bottom: 0.8rem; font-size: 1.4rem;">💡 Execution Review</h3>
@@ -1672,11 +1680,8 @@
           <h2 class="slide-title-chalk">Classroom Prompts</h2>
           <div class="classflow-container">
             <div class="prompt-card-wrapper">
-              <div class="prompt-image-placeholder" id="case-study-image" style="width: 140px; height: 140px;">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                </svg>
-                <span>Postcard</span>
+              <div class="prompt-image-placeholder" id="case-study-image" style="width: 140px; height: 140px; padding: 0;">
+                <img src="daniel.jpe" alt="Prompt 1: Actor Focus">
               </div>
               <div class="prompt-text">
                 <div class="prompt-title" id="prompt-title" style="font-size: 2.2rem; font-weight: 700;">Prompt 1: Actor Focus</div>
@@ -2147,28 +2152,28 @@
         desc: "Image of Daniel Padilla acting in a drama series.",
         ta: '"Class, look at this postcard of Daniel Padilla. Construct a Declarative Sentence."',
         sa: '"Daniel Padilla is a famous actor from the Philippines."',
-        iconSvg: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg><span>Postcard</span>'
+        imgSrc: "daniel.jpe"
       },
       {
         title: "Prompt 2: Hiking Trip",
         desc: "Image of a group of friends hiking to a high mountaintop.",
         ta: '"Here is a postcard of backpackers climbing. Give me an Exclamatory Sentence."',
         sa: '"Wow, what a breathtaking view from the peak of this mountain!"',
-        iconSvg: '<svg viewBox="0 0 24 24"><path d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z"/></svg><span>Hiking</span>'
+        imgSrc: "hiking.jpg"
       },
       {
         title: "Prompt 3: Rainy Day",
         desc: "Image of torrential rain downpours in downtown Manila streets.",
         ta: '"Look at this rainy day photo. Construct an Interrogative Sentence about the weather."',
         sa: '"Did you remember to bring your umbrella before heading outside today?"',
-        iconSvg: '<svg viewBox="0 0 24 24"><path d="M12 2c-5.33 4.55-8 8.1-8 10.67C4 16.27 7.58 20 12 20s8-3.73 8-7.33C20 10.1 17.33 6.55 12 2zm0 15.67c-2.9 0-5.33-2.51-5.33-5 0-1.85 1.88-4.63 5.33-7.9 3.45 3.27 5.33 6.05 5.33 7.9 0 2.49-2.43 5-5.33 5z"/></svg><span>Rainy</span>'
+        imgSrc: "rain.jpg"
       },
       {
         title: "Prompt 4: Study Time",
         desc: "Image of quiet children reading inside a library space.",
         ta: '"Examine this study library room. Construct an Imperative Sentence to maintain focus."',
         sa: '"Please read silently so others around you can study without noise."',
-        iconSvg: '<svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg><span>Library</span>'
+        imgSrc: "reading.webp"
       }
     ];
 
@@ -2183,7 +2188,7 @@
       const saBubble = document.getElementById('case-sa-bubble');
 
       // Update contents
-      imgPlaceholder.innerHTML = item.iconSvg;
+      imgPlaceholder.innerHTML = `<img src="${item.imgSrc}" alt="${item.title}">`;
       title.textContent = item.title;
       desc.textContent = item.desc;
 
