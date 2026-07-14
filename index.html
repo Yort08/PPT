@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GEE-PMT Module 6: Management of Instruction</title>
+  <meta name="description" content="An interactive presentation on GEE-PMT Module 6: Management of Instruction. The Art and Science of Instructional Planning. Built for Principles and Methods of Teaching. Optimized for large classroom readability.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* DESIGN SYSTEM & VARIABLES */
+    :root {
+      --bg-dark-desk: #151617;
+      --bg-chalkboard: #2B2D2F;
+      --bg-planner: #FDFBF7;
+      
+      /* Colors */
+      --color-red: #FF4136;
+      --color-red-chalk: #ff7b72;
+      --color-oak: #D4A373;
+      --color-oak-dark: #b88655;
+      --color-green: #2ECC71;
+      --color-green-chalk: #6ee7a1;
+      --color-text-dark: #232526;
+      --color-text-light: #F5F5F5;
+      --color-chalk-white: #ededed;
+      --color-blue-rule: #bcd8eb;
+      --color-red-margin: #f8a13f;
+      
+      /* Fonts */
+      --font-sans: 'Montserrat', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --font-handwritten: 'Comic Neue', cursive, sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    /* GLOBAL RESETS */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-dark-desk);
+      background-image: linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+      background-size: 120px 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      font-family: var(--font-sans);
+      color: var(--color-text-light);
+      position: relative;
+    }
+
+    /* TOP STATUS BAR */
+    header.status-bar {
+      height: 6vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 3vw;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #bbb;
+      z-index: 100;
+    }
+
+    header.status-bar span.accent {
+      color: var(--color-oak);
+    }
+
+    /* MAIN PRESENTATION FRAME (SINGLE DYNAMIC BOARD) */
+    .presentation-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2vh 3vw;
+      position: relative;
+    }
+
+    .slide-board {
+      width: 94vw;
+      height: 76vh;
+      max-width: 1700px;
+      background: var(--bg-chalkboard);
+      border: 20px solid var(--color-oak);
+      border-radius: 12px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.9), 
+                  inset 0 0 50px rgba(0,0,0,0.7);
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* SLIDE DECK WRAPPER */
+    .slide-deck {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(80px) scale(0.98);
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                  opacity 0.6s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 4vh 5vw 4vh 6vw;
+      z-index: 1;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      z-index: 5;
+    }
+
+    /* THEMED SLIDE BACKGROUNDS */
+    .slide-chalkboard {
+      background-color: var(--bg-chalkboard);
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0),
+                        radial-gradient(rgba(255,255,255,0.02) 1.5px, transparent 0);
+      background-size: 30px 30px, 60px 60px;
+      color: var(--color-chalk-white);
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+    }
+
+    .slide-planner {
+      background-color: var(--bg-planner);
+      color: var(--color-text-dark);
+      background-image: linear-gradient(var(--color-blue-rule) 1.5px, transparent 1.5px);
+      background-size: 100% 4.2rem;
+      background-position: 0 6.5rem;
+      padding-left: 9vw;
+    }
+
+    /* Margin Line & Spiral rings for Planner Sheets */
+    .slide-planner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 6.5vw;
+      width: 3px;
+      background-color: var(--color-red-margin);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    /* Planner Binder Spiral Rings along left edge */
+    .planner-rings {
+      position: absolute;
+      left: 1.5vw;
+      top: 0;
+      bottom: 0;
+      width: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 3vh 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .planner-ring {
+      width: 35px;
+      height: 12px;
+      background: linear-gradient(180deg, #888 0%, #ddd 45%, #bbb 55%, #666 100%);
+      border-radius: 6px;
+      box-shadow: 2px 3px 5px rgba(0,0,0,0.3);
+    }
+
+    /* MASSIVE TYPOGRAPHY FOR ROOM READABILITY */
+    h2.slide-title-chalk {
+      font-family: var(--font-handwritten);
+      font-size: clamp(2.5rem, 5.2vw, 4.8rem);
+      color: var(--color-chalk-white);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255,255,255,0.2);
+      border-bottom: 3px dashed rgba(255,255,255,0.25);
+      padding-bottom: 0.8rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1.5px;
+      font-weight: 800;
+    }
+
+    h2.slide-title-planner {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      color: var(--color-text-dark);
+      margin-bottom: 2.2rem;
+      border-bottom: 3px solid var(--color-oak);
+      padding-bottom: 0.6rem;
+      font-weight: 800;
+    }
+
+    p.classroom-lead, li.classroom-lead {
+      font-family: var(--font-body);
+      font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+      line-height: 1.6;
+      font-weight: 700;
+    }
+
+    p.classroom-desc, li.classroom-desc {
+      font-family: var(--font-body);
+      font-size: clamp(1.3rem, 2.2vw, 2rem);
+      line-height: 1.5;
+      color: inherit;
+    }
+
+    .chalk-large-text {
+      font-family: var(--font-handwritten);
+      font-size: clamp(2rem, 3.2vw, 3.2rem);
+      font-weight: 700;
+      color: var(--color-chalk-white);
+      line-height: 1.4;
+      text-shadow: 2px 2px 3px rgba(0,0,0,0.5);
+    }
+
+    /* BADGES (ENLARGED) */
+    .classroom-badge {
+      display: inline-block;
+      padding: 0.6em 1.2em;
+      border-radius: 30px;
+      font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-right: 0.8rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .badge-red { background-color: var(--color-red); color: white; }
+    .badge-green { background-color: var(--color-green); color: white; }
+    .badge-oak { background-color: var(--color-oak); color: white; }
+    .badge-chalk-red { border: 2.5px solid var(--color-red-chalk); color: var(--color-red-chalk); font-family: var(--font-handwritten); font-size: 2rem; }
+    .badge-chalk-green { border: 2.5px solid var(--color-green-chalk); color: var(--color-green-chalk); font-family: var(--font-handwritten); font-size: 2rem; }
+
+    /* BADGE DESCRIPTION BOX */
+    .badge-desc-box {
+      font-family: var(--font-body);
+      font-size: clamp(1.3rem, 2.2vw, 1.95rem);
+      font-weight: 600;
+      color: var(--color-text-dark);
+      background: white;
+      border: 2px solid var(--color-oak);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* LAYOUT CONTAINERS */
+    .classroom-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* LARGE CARDS */
+    .classroom-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .classroom-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+    }
+
+    .classroom-chalk-frame {
+      border: 4px double var(--color-chalk-white);
+      padding: 2rem;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.15);
+      margin-bottom: 1.5rem;
+    }
+
+    /* REFLECTION NOTEBOOK PINNING */
+    .reflection-area {
+      width: 100%;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .reflection-input {
+      width: 100%;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed var(--color-chalk-white);
+      border-radius: 6px;
+      color: var(--color-chalk-white);
+      padding: 1rem;
+      font-family: var(--font-handwritten);
+      font-size: 1.8rem;
+      resize: none;
+      outline: none;
+    }
+
+    .btn-chalk {
+      align-self: flex-end;
+      background: transparent;
+      border: 2px solid var(--color-chalk-white);
+      color: var(--color-chalk-white);
+      padding: 0.6rem 1.5rem;
+      font-family: var(--font-handwritten);
+      font-size: 1.6rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-chalk:hover {
+      background: var(--color-chalk-white);
+      color: var(--bg-chalkboard);
+      transform: scale(1.05);
+    }
+
+    .reflection-display {
+      margin-top: 1.2rem;
+      padding: 1.5rem;
+      background: #fcf3cf;
+      border-left: 8px solid var(--color-oak);
+      font-family: var(--font-handwritten);
+      font-size: 1.8rem;
+      color: #7d6608;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.08);
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    /* RULE OF CONGRUENCE */
+    .congruence-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .congruence-wheel {
+      width: 320px;
+      height: 320px;
+      position: relative;
+      border: 4px dashed var(--color-chalk-white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .congruence-center {
+      width: 110px;
+      height: 110px;
+      background: var(--color-red-chalk);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-handwritten);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: white;
+      z-index: 2;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .congruence-node {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: var(--bg-chalkboard);
+      border: 3px solid var(--color-chalk-white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-handwritten);
+      font-size: 1.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+
+    .congruence-node:hover, .congruence-center:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 18px rgba(255,255,255,0.4);
+    }
+
+    .congruence-node.node-obj { top: -50px; left: calc(50% - 50px); }
+    .congruence-node.node-strat { bottom: -30px; left: -10px; }
+    .congruence-node.node-assess { bottom: -30px; right: -10px; }
+
+    .congruence-info-box {
+      width: 90%;
+      min-height: 100px;
+      padding: 1.2rem;
+      border: 3px dashed var(--color-chalk-white);
+      border-radius: 6px;
+      font-family: var(--font-handwritten);
+      font-size: 1.95rem;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-green-chalk);
+    }
+
+    /* HORIZONS ACCORDION CASCADING TIMELINE */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-left: 8px solid var(--color-oak);
+      border-radius: 6px;
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover, .timeline-item.active {
+      transform: translateX(10px);
+      background: #fdf6e2;
+      border-left-color: var(--color-red);
+    }
+
+    .timeline-num {
+      font-family: var(--font-serif);
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: var(--color-red);
+      margin-right: 1.2rem;
+      min-width: 30px;
+    }
+
+    .timeline-content h4 {
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+
+    .timeline-content p {
+      font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+      color: #444;
+      display: none;
+      margin-top: 0.4rem;
+      animation: slideDown 0.3s ease forwards;
+    }
+
+    .timeline-item.active .timeline-content p {
+      display: block;
+    }
+
+    /* COMPARISON TABLE */
+    .grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .grid-table th {
+      background-color: var(--color-oak);
+      color: white;
+      text-align: left;
+      padding: 1.2rem;
+      font-weight: 700;
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    }
+
+    .grid-table td {
+      padding: 1.2rem;
+      border-bottom: 2px solid rgba(0,0,0,0.05);
+      font-size: clamp(1.2rem, 2vw, 1.75rem);
+      color: var(--color-text-dark);
+      line-height: 1.5;
+    }
+
+    .grid-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .grid-table tr:nth-child(even) {
+      background-color: #faf8f5;
+    }
+
+    /* FLOWCHART & PROCEDURES */
+    .flowchart-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3rem;
+      padding: 0 1rem;
+    }
+
+    .flow-step {
+      background: var(--bg-chalkboard);
+      border: 3px solid var(--color-chalk-white);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      font-family: var(--font-handwritten);
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      min-width: 130px;
+      box-shadow: 4px 4px 8px rgba(0,0,0,0.4);
+    }
+
+    .flow-step:hover, .flow-step.active {
+      background: var(--color-green-chalk);
+      color: var(--bg-chalkboard);
+      border-color: var(--color-green-chalk);
+      transform: scale(1.1);
+    }
+
+    .flow-arrow {
+      font-family: var(--font-handwritten);
+      font-size: 2.5rem;
+      color: var(--color-red-chalk);
+      animation: pulse 1.5s infinite;
+    }
+
+    .flowchart-desc {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      border: 3px dashed var(--color-chalk-white);
+      border-radius: 6px;
+      min-height: 100px;
+      font-family: var(--font-handwritten);
+      font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--color-chalk-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* THREE DOMAINS CARD FLIP */
+    .domains-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .domain-card {
+      flex: 1;
+      height: 300px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .domain-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .domain-card.flipped .domain-inner {
+      transform: rotateY(180deg);
+    }
+
+    .domain-front, .domain-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .domain-front {
+      background: white;
+      color: var(--color-text-dark);
+    }
+
+    .domain-front h3 {
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .domain-front p.classroom-desc {
+      color: #666;
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      font-weight: 600;
+    }
+
+    .domain-back {
+      background: var(--bg-planner);
+      color: var(--color-text-dark);
+      transform: rotateY(180deg);
+      border: 3px solid var(--color-oak);
+      text-align: left;
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
+
+    .domain-icon {
+      font-size: 4.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .domain-back h4 {
+      font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+      color: var(--color-red);
+      margin-bottom: 0.6rem;
+      border-bottom: 2.5px solid rgba(0,0,0,0.08);
+      width: 100%;
+      padding-bottom: 0.3rem;
+      font-weight: 700;
+    }
+
+    .domain-back p {
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* ACTION VERBS TAXONOMY */
+    .verbs-explorer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .verbs-controls {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.5rem;
+      background: #eaeaea;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--color-oak);
+      color: white;
+    }
+
+    .verbs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 0.8rem;
+    }
+
+    .verb-tier-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+
+    .verb-tier-card.highlighted {
+      border: 3px solid var(--color-red);
+      background-color: #fdf2e9;
+      transform: scale(1.03);
+    }
+
+    .verb-tier-card h4 {
+      font-size: clamp(1.25rem, 2vw, 1.65rem);
+      color: var(--color-red);
+      margin-bottom: 0.3rem;
+    }
+
+    .verb-tier-card p {
+      font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+      color: #444;
+      font-weight: 600;
+    }
+
+    /* CASE STUDY MOCKUP */
+    .classflow-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      height: 100%;
+    }
+
+    .prompt-card-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 3px dashed rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 1.2rem;
+      min-height: 130px;
+    }
+
+    .prompt-image-placeholder {
+      width: 120px;
+      height: 120px;
+      background: #3e4144;
+      border-radius: 6px;
+      border: 3px solid var(--color-chalk-white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-handwritten);
+      font-size: 1.4rem;
+      text-align: center;
+      padding: 0.5rem;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.4);
+    }
+
+    .prompt-image-placeholder svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 5px;
+      fill: var(--color-chalk-white);
+    }
+
+    .prompt-text {
+      flex: 1;
+      margin-left: 2rem;
+    }
+
+    .prompt-title {
+      font-family: var(--font-handwritten);
+      font-size: 1.8rem;
+      color: var(--color-oak);
+      margin-bottom: 0.3rem;
+    }
+
+    .prompt-description {
+      font-family: var(--font-handwritten);
+      font-size: 1.45rem;
+      color: var(--color-chalk-white);
+      line-height: 1.3;
+    }
+
+    .activity-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .activity-panel {
+      border: 3px solid var(--color-chalk-white);
+      border-radius: 6px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      background: rgba(0,0,0,0.15);
+      min-height: 180px;
+    }
+
+    .activity-panel-header {
+      font-family: var(--font-handwritten);
+      font-size: 1.6rem;
+      color: var(--color-green-chalk);
+      border-bottom: 2px dashed rgba(255,255,255,0.25);
+      padding-bottom: 0.4rem;
+    }
+
+    .speech-bubble {
+      font-family: var(--font-handwritten);
+      font-size: 1.6rem;
+      line-height: 1.4;
+      padding: 0.8rem;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+
+    .activity-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    /* EVALUATION QUIZ */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .quiz-question-box {
+      border: 3px solid var(--color-chalk-white);
+      border-radius: 6px;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.1);
+    }
+
+    .quiz-num {
+      font-family: var(--font-handwritten);
+      font-size: 1.6rem;
+      color: var(--color-red-chalk);
+      margin-bottom: 0.5rem;
+    }
+
+    .quiz-question {
+      font-family: var(--font-handwritten);
+      font-size: 2.1rem;
+      line-height: 1.4;
+      color: var(--color-chalk-white);
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .quiz-opt-btn {
+      background: transparent;
+      border: 3px solid var(--color-chalk-white);
+      color: var(--color-chalk-white);
+      padding: 1rem;
+      font-family: var(--font-handwritten);
+      font-size: 1.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .quiz-opt-btn:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+
+    .quiz-opt-btn.correct {
+      background: var(--color-green-chalk);
+      color: var(--bg-chalkboard);
+      border-color: var(--color-green-chalk);
+    }
+
+    .quiz-opt-btn.incorrect {
+      background: var(--color-red-chalk);
+      color: white;
+      border-color: var(--color-red-chalk);
+    }
+
+    .quiz-feedback {
+      min-height: 45px;
+      font-family: var(--font-handwritten);
+      font-size: 1.7rem;
+      text-align: center;
+      color: var(--color-green-chalk);
+      margin-top: 0.5rem;
+    }
+
+    /* NAVIGATION BAR AT BOTTOM */
+    footer.nav-bar {
+      height: 8vh;
+      background: rgba(0, 0, 0, 0.6);
+      border-top: 2px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 3vw;
+      z-index: 100;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 2px solid var(--color-oak);
+      color: var(--color-oak);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--color-oak);
+      color: var(--bg-dark-desk);
+      box-shadow: 0 0 12px rgba(212, 163, 115, 0.4);
+      transform: scale(1.08);
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .nav-indicators {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .indicator-dot.active {
+      background: var(--color-oak);
+      transform: scale(1.4);
+      box-shadow: 0 0 8px var(--color-oak);
+    }
+
+    .shortcuts-legend {
+      font-size: 0.85rem;
+      color: #999;
+      letter-spacing: 0.5px;
+    }
+
+    .shortcuts-legend kbd {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+      padding: 0.1em 0.5em;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-family: monospace;
+      margin: 0 0.15rem;
+    }
+
+    /* KEYFRAME ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-5px); max-height: 0; }
+      to { opacity: 1; transform: translateY(0); max-height: 180px; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* RESPONSIVE SCALING */
+    @media (max-width: 1024px) {
+      .slide-board {
+        height: auto;
+        min-height: 70vh;
+        overflow-y: auto;
+      }
+      .slide {
+        position: relative;
+        height: auto;
+        opacity: 1 !important;
+        transform: none !important;
+        display: none;
+      }
+      .slide.active {
+        display: flex;
+      }
+      body {
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP STATUS BAR -->
+  <header class="status-bar">
+    <div>Principles & Methods of Teaching <span class="accent">//</span> GEE-PMT Module 6</div>
+    <div id="slide-title-header">Title Page</div>
+  </header>
+
+  <!-- MAIN BOARD WRAPPER -->
+  <main class="presentation-container">
+    <div class="slide-board">
+      
+      <!-- SLIDE DECK CONTAINER -->
+      <div class="slide-deck">
+
+        <!-- SLIDE 1: WELCOME & TITLE (Chalkboard) -->
+        <section class="slide slide-chalkboard active" id="slide-1">
+          <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+            <h2 class="slide-title-chalk" style="border: none; margin-bottom: 1rem;">GEE-PMT Module 6</h2>
+            <h1 style="font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4.8rem); color: var(--color-oak); line-height: 1.2; margin-bottom: 1.5rem; text-shadow: 2px 2px 5px rgba(0,0,0,0.5);">
+              Management of Instruction
+            </h1>
+            <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 2rem;">
+              "The Art and Science of Instructional Planning"
+            </p>
+            <div class="classroom-chalk-frame" style="width: 70%; max-width: 800px; padding: 1rem 2rem;">
+              <p class="chalk-large-text" style="font-size: 1.5rem;">📚 Double-click or Press Space to Flip Through the Teacher's Planner</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 2: MODULE OUTLINE (Planner) -->
+        <section class="slide slide-planner" id="slide-2">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Module Outline</h2>
+          <div class="planner-subtitle">GEE-PMT Lesson Roadmap</div>
+          <div class="classroom-grid-2">
+            <div>
+              <p class="classroom-lead" style="color: var(--color-red); margin-bottom: 1rem;">⚡ Seven Tracks of Instruction:</p>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem;">
+                <li class="classroom-lead" style="font-weight: 500;">📖 Part 1: Foundations of Planning (Troy)</li>
+                <li class="classroom-lead" style="font-weight: 500;">🗓️ Part 2: Horizons & Congruence (Emman)</li>
+                <li class="classroom-lead" style="font-weight: 500;">📋 Part 3: Formats & Components (Esteban)</li>
+                <li class="classroom-lead" style="font-weight: 500;">📂 Part 4: Structural Framework (Urie)</li>
+              </ul>
+            </div>
+            <div>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin-top: 2.2rem;">
+                <li class="classroom-lead" style="font-weight: 500;">🎯 Part 5: SMART & Tiers (Balicao)</li>
+                <li class="classroom-lead" style="font-weight: 500;">📝 Part 6: Action Verbs Taxonomy (JM)</li>
+                <li class="classroom-lead" style="font-weight: 500;">🔍 Part 7: Classroom Case Study (Urbano)</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 3: PART 1 - FOUNDATIONS (Planner) -->
+        <section class="slide slide-planner" id="slide-3">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Foundations of Planning</h2>
+          <div class="planner-subtitle">Instructor: Troy</div>
+          
+          <div class="classroom-card">
+            <h3 style="color: var(--color-red); margin-bottom: 0.8rem; font-size: 1.5rem;">🎯 Module Objectives</h3>
+            <ul style="padding-left: 2rem; display: flex; flex-direction: column; gap: 0.6rem;">
+              <li class="classroom-desc">Discuss the meaning and nature of planning instruction.</li>
+              <li class="classroom-desc">Explain the general principles governing planning.</li>
+              <li class="classroom-desc">Identify and describe core planning components.</li>
+              <li class="classroom-desc">Examine blueprints and preparation guidelines.</li>
+              <li class="classroom-desc">Develop and write a sample classroom lesson plan.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE 4: PART 1 - REFLECTION (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-4">
+          <h2 class="slide-title-chalk">Guided Reflections</h2>
+          <div class="classroom-chalk-frame">
+            <p class="chalk-large-text" style="font-style: italic; text-align: center; color: var(--color-red-chalk);">
+              "Coming to class without a lesson plan is the most unpardonable fault of the teacher."
+            </p>
+          </div>
+          <div class="reflection-area">
+            <label class="chalk-large-text" style="color: var(--color-green-chalk);">⚡ Reflective Prompt:</label>
+            <p class="chalk-large-text" style="font-size: 1.4rem; margin-bottom: 0.5rem;">
+              If a lesson plan acts as your classroom compass, what happens to learners when you teach off-course without it?
+            </p>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <textarea class="reflection-input" placeholder="Type your classroom reflection notes here..." id="reflection-text"></textarea>
+              <button class="btn-chalk" onclick="saveReflection()" style="height: 120px; width: 180px; white-space: normal;">Pin Note on planner</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 5: PART 1 - DEFINITION & PURPOSES (Planner) -->
+        <section class="slide slide-planner" id="slide-5">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">What is Planning?</h2>
+          <div class="planner-subtitle">Instructor: Troy // Definition & Purposes</div>
+          <div class="classroom-grid-2">
+            <div class="classroom-card">
+              <h3 style="color: var(--color-oak-dark); margin-bottom: 0.8rem; font-size: 1.4rem;">🗺️ Roadmap & Visualization</h3>
+              <p class="classroom-desc" style="margin-bottom: 0.5rem;">
+                Acts as an <strong>instructional roadmap</strong> keeping targets in absolute focus.
+              </p>
+              <p class="classroom-desc">
+                Allows teachers to <strong>visualize classroom events</strong> and anticipate student barriers beforehand.
+              </p>
+            </div>
+            <div class="classroom-card">
+              <h3 style="color: var(--color-green); margin-bottom: 0.8rem; font-size: 1.4rem;">⏱️ Resource & Curriculum Alignment</h3>
+              <p class="classroom-desc" style="margin-bottom: 0.5rem;">
+                Enables effective <strong>time management</strong>, budgeting minutes to prevent classroom rushing.
+              </p>
+              <p class="classroom-desc">
+                Explicitly <strong>links curriculum standards</strong> to daily physical classroom execution.
+              </p>
+            </div>
+          </div>
+          
+          <!-- Sticky note section (Dynamically filled) -->
+          <div class="reflection-display" id="reflection-sticky-note" style="margin-top: 1rem;"></div>
+        </section>
+
+        <!-- SLIDE 6: PART 2 - CONGRUENCE (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-6">
+          <h2 class="slide-title-chalk">Rule of Congruence</h2>
+          <div class="classroom-grid-2">
+            <div>
+              <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 1.5rem;">
+                The foundational rule of instructional design is absolute alignment.
+              </p>
+              <div class="congruence-info-box" id="congruence-feedback" style="width: 100%; min-height: 180px;">
+                Click a target circle on the right diagram to check structural congruence.
+              </div>
+            </div>
+            <div class="congruence-container">
+              <div class="congruence-wheel">
+                <div class="congruence-center" onclick="showCongruence('content')">Content</div>
+                <div class="congruence-node node-obj" onclick="showCongruence('obj')">Objectives</div>
+                <div class="congruence-node node-strat" onclick="showCongruence('strat')">Methods</div>
+                <div class="congruence-node node-assess" onclick="showCongruence('assess')">Assess</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 7: PART 2 - HORIZONS TIMELINE (Planner) -->
+        <section class="slide slide-planner" id="slide-7">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Horizons: 5 Levels of Planning</h2>
+          <div class="planner-subtitle">Instructor: Emman // Macro-to-Micro Scopes</div>
+          <p class="classroom-desc" style="margin-bottom: 1rem; color: #555;">
+            Click each planner sheet level to expand details:
+          </p>
+          <div class="timeline-container">
+            <div class="timeline-item active" onclick="toggleTimeline(this)">
+              <div class="timeline-num">1</div>
+              <div class="timeline-content">
+                <h4>Yearly Plan (Macro-Syllabus)</h4>
+                <p class="classroom-desc" style="font-size: 0.95rem;">Establishes general content outlines, reserves macro classroom supplies, and maps milestones.</p>
+              </div>
+            </div>
+            <div class="timeline-item" onclick="toggleTimeline(this)">
+              <div class="timeline-num">2</div>
+              <div class="timeline-content">
+                <h4>Term Plan (Quarterly Outlines)</h4>
+                <p class="classroom-desc" style="font-size: 0.95rem;">Schedules detailed content segments and aligns pacing budgets to conform with term goals.</p>
+              </div>
+            </div>
+            <div class="timeline-item" onclick="toggleTimeline(this)">
+              <div class="timeline-num">3</div>
+              <div class="timeline-content">
+                <h4>Unit Plan (Thematic Blocks)</h4>
+                <p class="classroom-desc" style="font-size: 0.95rem;">Sequences closely related concepts and scopes monthly/weekly materials and activities.</p>
+              </div>
+            </div>
+            <div class="timeline-item" onclick="toggleTimeline(this)">
+              <div class="timeline-num">4</div>
+              <div class="timeline-content">
+                <h4>Weekly Plan (Context Budget)</h4>
+                <p class="classroom-desc" style="font-size: 0.95rem;">Reorganizes content scopes to adapt to weather disruptions, assemblies, or pacing shifts.</p>
+              </div>
+            </div>
+            <div class="timeline-item" onclick="toggleTimeline(this)">
+              <div class="timeline-num">5</div>
+              <div class="timeline-content">
+                <h4>Daily Plan (Micro Action Guides)</h4>
+                <p class="classroom-desc" style="font-size: 0.95rem;">Immediate classroom concerns, scripts, questions, and last-minute room adjustments.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 8: PART 3 - FORMATS COMPARISON (Planner) -->
+        <section class="slide slide-planner" id="slide-8">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Formats Comparison</h2>
+          <div class="planner-subtitle">Instructor: Esteban // Brief, Semi-Detailed, and Detailed formats</div>
+          
+          <table class="grid-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">Format</th>
+                <th style="width: 50%;">Key Features</th>
+                <th style="width: 25%;">Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Brief</strong></td>
+                <td>Outline format, targets seasoned teachers, copies objectives/subject matter/evaluation/assignment, but omits detailed steps.</td>
+                <td>Seasoned Teachers</td>
+              </tr>
+              <tr>
+                <td><strong>Semi-detailed</strong></td>
+                <td>Shorter format, copies all steps but omits student answers.</td>
+                <td>General Faculty</td>
+              </tr>
+              <tr>
+                <td><strong>Detailed (DLP)</strong></td>
+                <td>Full-scale roadmap for pre-service teachers. Explicitly split into two dynamic columns: "Teacher's Activity (TA)" vs. "Students' Activity (SA)".</td>
+                <td>Pre-Service / Practicum</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE 9: PART 3 - DLP COLUMNS (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-9">
+          <h2 class="slide-title-chalk">DLP Script Columns</h2>
+          <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 1.5rem;">
+            Detailed Lesson Plans (DLP) partition classroom dialogue. Click a phase:
+          </p>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <button class="btn-chalk" onclick="showDlpPhase('intro')">Introduction</button>
+            <button class="btn-chalk" onclick="showDlpPhase('discussion')">Discussion Proper</button>
+            <button class="btn-chalk" onclick="showDlpPhase('practice')">Class Task</button>
+          </div>
+          
+          <div class="classroom-grid-2" style="border: 3px solid var(--color-chalk-white); border-radius: 6px; padding: 1.5rem; background: rgba(0,0,0,0.15);">
+            <div>
+              <h4 style="font-family: var(--font-handwritten); font-size: 1.8rem; color: var(--color-red-chalk); margin-bottom: 0.5rem; border-bottom: 2px dashed rgba(255,255,255,0.25);">Teacher's Activity (TA)</h4>
+              <p class="chalk-large-text" id="dlp-ta-text" style="min-height: 100px;">"Good morning, class! Let's check our seating alignments."</p>
+            </div>
+            <div style="border-left: 2px dashed rgba(255,255,255,0.25); padding-left: 1.5rem;">
+              <h4 style="font-family: var(--font-handwritten); font-size: 1.8rem; color: var(--color-green-chalk); margin-bottom: 0.5rem; border-bottom: 2px dashed rgba(255,255,255,0.25);">Students' Activity (SA)</h4>
+              <p class="chalk-large-text" id="dlp-sa-text" style="min-height: 100px;">"Good morning, Teacher! (Students stand up and align desks)"</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 10: PART 3 - CORE COMPONENTS (Planner) -->
+        <section class="slide slide-planner" id="slide-10">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">6 Core Components</h2>
+          <div class="planner-subtitle">Instructor: Esteban // Fundamental elements of a plan</div>
+          <p class="classroom-desc" style="margin-bottom: 1.5rem; color: #555;">
+            Click a classroom component badge to inspect its details:
+          </p>
+
+          <div class="badge-container" style="justify-content: center; margin-bottom: 2rem;">
+            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('obj')">1. Objectives</span>
+            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mot')">2. Motivation</span>
+            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('prop')">3. Lesson Proper</span>
+            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('meth')">4. Varied Methods</span>
+            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mat')">5. Varied Materials</span>
+            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('ass')">6. Provision for Assignment</span>
+          </div>
+          
+          <div class="badge-desc-box" id="badge-desc" style="min-height: 100px; line-height: 1.5; padding: 1.5rem;">
+            Click a badge above to display lesson component info.
+          </div>
+        </section>
+
+        <!-- SLIDE 11: PART 4 - STRUCTURAL FLOWCHART (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-11">
+          <h2 class="slide-title-chalk">Structural Framework Anatomy</h2>
+          <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 2rem;">
+            Click each box to display the structural blueprint details:
+          </p>
+          
+          <div class="flowchart-container" style="max-width: 90%; margin: auto;">
+            <div class="flow-step active" onclick="showFlowDesc('obj')">Objectives</div>
+            <div class="flow-arrow">➔</div>
+            <div class="flow-step" onclick="showFlowDesc('sm')">Subject Matter</div>
+            <div class="flow-arrow">➔</div>
+            <div class="flow-step" onclick="showFlowDesc('proc')">Learning Procedures</div>
+            <div class="flow-arrow">➔</div>
+            <div class="flow-step" onclick="showFlowDesc('eval')">Evaluation</div>
+            <div class="flow-arrow">➔</div>
+            <div class="flow-step" onclick="showFlowDesc('assign')">Assignment</div>
+          </div>
+
+          <div class="flowchart-desc" id="flowchart-feedback" style="margin-top: 3rem; min-height: 120px; padding: 1.5rem;">
+            Objectives: Defines the target destinations and student behavior outcomes.
+          </div>
+        </section>
+
+        <!-- SLIDE 12: PART 4 - FLOW OF ACTIVITIES (Planner) -->
+        <section class="slide slide-planner" id="slide-12">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Flow of Learning Activities</h2>
+          <div class="planner-subtitle">Instructor: Urie // Step-by-step procedures</div>
+          
+          <div class="classroom-grid-2">
+            <div class="classroom-card">
+              <h3 style="color: var(--color-red); margin-bottom: 1rem; font-size: 1.45rem;">⚡ 1. routines & warmups</h3>
+              <ul style="padding-left: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <li class="classroom-desc"><strong>Classroom Routines:</strong> Daily prayer, checking room cleanliness, attendance.</li>
+                <li class="classroom-desc"><strong>Drills & Review:</strong> Re-activating student schemas and reviewing yesterday's lesson.</li>
+              </ul>
+            </div>
+            <div class="classroom-card">
+              <h3 style="color: var(--color-green); margin-bottom: 1rem; font-size: 1.45rem;">⚡ 2. core lesson & closure</h3>
+              <ul style="padding-left: 2rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <li class="classroom-desc"><strong>Lesson Proper:</strong> Presentation of topics, active Q&A discussion, abstractions.</li>
+                <li class="classroom-desc"><strong>Closure:</strong> Direct application of concepts to new student challenges.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 13: PART 4 - PREREQUISITES (Planner) -->
+        <section class="slide slide-planner" id="slide-13">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Teacher Prerequisites</h2>
+          <div class="planner-subtitle">Instructor: Urie // Core competencies before planning</div>
+          
+          <div class="classroom-card" style="max-width: 900px; margin: auto;">
+            <h3 style="color: var(--color-oak-dark); margin-bottom: 1rem; font-size: 1.5rem;">⚙️ The 4 Essentials</h3>
+            <ul style="padding-left: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+              <li class="classroom-lead" style="font-weight: 500;">🧠 <strong>Subject knowledge:</strong> Mastery of lesson contents.</li>
+              <li class="classroom-lead" style="font-weight: 500;">👶 <strong>Knowing learner nature:</strong> Understanding developmental capabilities.</li>
+              <li class="classroom-lead" style="font-weight: 500;">💡 <strong>Familiarity with strategies:</strong> Designing diverse plans.</li>
+              <li class="classroom-lead" style="font-weight: 500;">🇵🇭 <strong>Understanding Philippine education thrusts:</strong> Aligned with DEPED guidelines.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE 14: PART 5 - SMART OBJECTIVES (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-14">
+          <h2 class="slide-title-chalk">SMART Objectives</h2>
+          <div class="classroom-grid-2">
+            <div>
+              <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 1.5rem;">
+                Click each letter to display concrete classroom examples:
+              </p>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem;">
+                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('S')">
+                  <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">S</span> Specific
+                </li>
+                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('M')">
+                  <span class="classroom-badge badge-chalk-green" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">M</span> Measurable
+                </li>
+                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('A')">
+                  <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">A</span> Attainable
+                </li>
+                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('R')">
+                  <span class="classroom-badge badge-chalk-green" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">R</span> Result-oriented
+                </li>
+                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('T')">
+                  <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">T</span> Time-bound
+                </li>
+              </ul>
+            </div>
+            <div class="flowchart-desc" id="smart-feedback" style="align-self: center; width: 100%; min-height: 180px; padding: 1.5rem;">
+              Click a letters badge on the left to see lesson example!
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 15: PART 5 - THE 3 DOMAINS (Planner) -->
+        <section class="slide slide-planner" id="slide-15">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">The 3 Educational Domains</h2>
+          <div class="planner-subtitle">Instructor: Balicao // Click cards to flip:</div>
+          
+          <div class="domains-container">
+            <!-- Cognitive Card -->
+            <div class="domain-card" onclick="flipCard(this)">
+              <div class="domain-inner">
+                <div class="domain-front">
+                  <div class="domain-icon">🧠</div>
+                  <h3>Cognitive</h3>
+                  <p class="classroom-desc">Mental Processes</p>
+                </div>
+                <div class="domain-back">
+                  <h4>Head Domain</h4>
+                  <p>Includes: Perception, Attention, Memory, Language, Reasoning, Problem-solving.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Affective Card -->
+            <div class="domain-card" onclick="flipCard(this)">
+              <div class="domain-inner">
+                <div class="domain-front">
+                  <div class="domain-icon">❤️</div>
+                  <h3>Affective</h3>
+                  <p class="classroom-desc">Emotional Growth</p>
+                </div>
+                <div class="domain-back">
+                  <h4>Heart Domain</h4>
+                  <p>Includes: Feelings, Attitudes, Motivation, Interpersonal skills, Self-concept.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Psychomotor Card -->
+            <div class="domain-card" onclick="flipCard(this)">
+              <div class="domain-inner">
+                <div class="domain-front">
+                  <div class="domain-icon">⚙️</div>
+                  <h3>Psychomotor</h3>
+                  <p class="classroom-desc">Physical Skills</p>
+                </div>
+                <div class="domain-back">
+                  <h4>Hands Domain</h4>
+                  <p>Includes: Motor skills, Physical abilities, Coordination, Kinesthetic awareness, Manipulation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 16: PART 6 - VERBS TAXONOMY GRID (Planner) -->
+        <section class="slide slide-planner" id="slide-16">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Action Verbs Reference</h2>
+          <div class="planner-subtitle">Instructor: JM // Select tab categories</div>
+          
+          <div class="verbs-explorer">
+            <div class="verbs-controls">
+              <button class="tab-btn active" onclick="switchVerbTab('cog')">Cognitive (Head)</button>
+              <button class="tab-btn" onclick="switchVerbTab('aff')">Affective (Heart)</button>
+              <button class="tab-btn" onclick="switchVerbTab('psy')">Psychomotor (Hands)</button>
+            </div>
+
+            <!-- Cognitive Verbs -->
+            <div class="verbs-grid" id="verbs-cog">
+              <div class="verb-tier-card" id="tier-rem">
+                <h4>Remembering</h4>
+                <p>Define, List</p>
+              </div>
+              <div class="verb-tier-card" id="tier-und">
+                <h4>Understanding</h4>
+                <p>Describe, Explain</p>
+              </div>
+              <div class="verb-tier-card" id="tier-app">
+                <h4>Applying</h4>
+                <p>Demonstrate, Solve</p>
+              </div>
+              <div class="verb-tier-card" id="tier-ana">
+                <h4>Analyzing</h4>
+                <p>Differentiate, Examine</p>
+              </div>
+              <div class="verb-tier-card" id="tier-eva">
+                <h4>Evaluating</h4>
+                <p>Critique, Defend</p>
+              </div>
+              <div class="verb-tier-card" id="tier-cre">
+                <h4>Creating</h4>
+                <p>Compose, Formulate</p>
+              </div>
+            </div>
+
+            <!-- Affective Verbs -->
+            <div class="verbs-grid" id="verbs-aff" style="display: none;">
+              <div class="verb-tier-card" id="tier-rec">
+                <h4>Receiving</h4>
+                <p>Ask, Listen</p>
+              </div>
+              <div class="verb-tier-card" id="tier-res">
+                <h4>Responding</h4>
+                <p>Answer, Greet</p>
+              </div>
+              <div class="verb-tier-card" id="tier-val">
+                <h4>Valuing</h4>
+                <p>Complete, Join</p>
+              </div>
+              <div class="verb-tier-card" id="tier-org">
+                <h4>Organizing</h4>
+                <p>Arrange, Integrate</p>
+              </div>
+              <div class="verb-tier-card" id="tier-char">
+                <h4>Characterization</h4>
+                <p>Act, Verify</p>
+              </div>
+            </div>
+
+            <!-- Psychomotor Verbs -->
+            <div class="verbs-grid" id="verbs-psy" style="display: none;">
+              <div class="verb-tier-card" id="tier-imi">
+                <h4>Imitation</h4>
+                <p>Align, Follow</p>
+              </div>
+              <div class="verb-tier-card" id="tier-man">
+                <h4>Manipulation</h4>
+                <p>Practice, Repeat</p>
+              </div>
+              <div class="verb-tier-card" id="tier-pre">
+                <h4>Precision</h4>
+                <p>Errorlessly, Independently</p>
+              </div>
+              <div class="verb-tier-card" id="tier-art">
+                <h4>Articulation</h4>
+                <p>Harmony, Coordination</p>
+              </div>
+              <div class="verb-tier-card" id="tier-nat">
+                <h4>Naturalization</h4>
+                <p>Effortlessly, Routinely</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 17: PART 6 - VERBS FINDER (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-17">
+          <h2 class="slide-title-chalk">Interactive Verbs Explorer</h2>
+          <div class="reflection-area">
+            <label class="chalk-large-text" style="color: var(--color-green-chalk);">🔍 Search Action Verbs:</label>
+            <input type="text" class="reflection-input" style="height: 60px; font-size: 2rem;" placeholder="Type a verb (e.g. Solve, Critique, Ask)..." id="verb-search" oninput="searchVerbs()">
+            <div class="flowchart-desc" id="search-feedback" style="margin-top: 1.5rem; min-height: 140px; padding: 1.5rem;">
+              Type a verb to find its domain tier. (Try "Solve", "Critique", or "Align")
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 18: PART 7 - CASE STUDY (Planner) -->
+        <section class="slide slide-planner" id="slide-18">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Case Study Analysis</h2>
+          <div class="planner-subtitle">Instructor: Urbano // DLP English Lesson</div>
+          
+          <div class="classroom-grid-2">
+            <div class="classroom-card">
+              <h3 style="color: var(--color-red); margin-bottom: 0.8rem; font-size: 1.4rem;">📖 DLP Setup</h3>
+              <p class="classroom-desc" style="margin-bottom: 0.5rem;"><strong>Topic:</strong> Sentences According to Structure.</p>
+              <p class="classroom-desc"><strong>Methodology:</strong> Inductive lesson path using picture prompt materials to guide students in formulating rules.</p>
+            </div>
+            <div class="classroom-card">
+              <h3 style="color: var(--color-green); margin-bottom: 0.8rem; font-size: 1.4rem;">💡 Execution Review</h3>
+              <p class="classroom-desc">Integrates local pop culture references (e.g., Daniel Padilla, Mountaintop Hiking) to sustain active engagement.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 19: PART 7 - DLP SCENARIOS (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-19">
+          <h2 class="slide-title-chalk">Classroom Prompts</h2>
+          <div class="classflow-container">
+            <div class="prompt-card-wrapper">
+              <div class="prompt-image-placeholder" id="case-study-image" style="width: 140px; height: 140px;">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+                <span>Postcard</span>
+              </div>
+              <div class="prompt-text">
+                <div class="prompt-title" id="prompt-title" style="font-size: 2.2rem; font-weight: 700;">Prompt 1: Actor Focus</div>
+                <div class="prompt-description" id="prompt-desc" style="font-size: 1.8rem;">Image of Daniel Padilla acting in a drama series.</div>
+              </div>
+            </div>
+
+            <div class="activity-columns">
+              <div class="activity-panel">
+                <div class="activity-panel-header">Teacher (TA)</div>
+                <div class="speech-bubble" id="case-ta-bubble">"Class, look at this postcard of Daniel Padilla. Construct a Declarative Sentence."</div>
+              </div>
+              <div class="activity-panel">
+                <div class="activity-panel-header">Students (SA)</div>
+                <div class="speech-bubble" id="case-sa-bubble" style="color: var(--color-green-chalk);">"Daniel Padilla is a famous actor from the Philippines."</div>
+              </div>
+            </div>
+
+            <div class="activity-controls">
+              <button class="btn-chalk" onclick="cycleCaseStudy(-1)">Previous Prompt</button>
+              <button class="btn-chalk" onclick="cycleCaseStudy(1)">Next Prompt</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 20: EVALUATION QUIZ (Chalkboard) -->
+        <section class="slide slide-chalkboard" id="slide-20">
+          <h2 class="slide-title-chalk">Lesson Evaluation</h2>
+          <div class="quiz-container" id="quiz-body">
+            <div class="quiz-question-box">
+              <div class="quiz-num" id="quiz-progress">Question 1 of 10</div>
+              <div class="quiz-question" id="quiz-question-text">"Daniel Padilla is a famous actor."</div>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="checkQuizAnswer('DC')">Declarative (DC)</button>
+              <button class="quiz-opt-btn" onclick="checkQuizAnswer('INC')">Interrogative (INC)</button>
+              <button class="quiz-opt-btn" onclick="checkQuizAnswer('IMC')">Imperative (IMC)</button>
+              <button class="quiz-opt-btn" onclick="checkQuizAnswer('EC')">Exclamatory (EC)</button>
+            </div>
+            <div class="quiz-feedback" id="quiz-feedback">Select an option.</div>
+          </div>
+        </section>
+
+        <!-- SLIDE 21: LESSON PLAN EXAMPLE (Planner) -->
+        <section class="slide slide-planner" id="slide-21">
+          <div class="planner-rings">
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+            <div class="planner-ring"></div>
+          </div>
+          <h2 class="slide-title-planner">Module 6 Lesson Plan</h2>
+          <div class="planner-subtitle">Instructors: All Members // Teaching Session Sheet</div>
+          
+          <div class="classroom-grid-2" style="gap: 1.5rem;">
+            <div class="classroom-card" style="padding: 1.5rem; margin-bottom: 0;">
+              <h3 style="color: var(--color-red); margin-bottom: 0.5rem; font-size: clamp(1.3rem, 2.2vw, 1.8rem);">📋 Plan Profile & Objectives</h3>
+              <p class="classroom-desc" style="font-size: clamp(1.1rem, 1.8vw, 1.5rem); margin-bottom: 0.8rem;">
+                <strong>Subject:</strong> Principles &amp; Methods of Teaching (PMT)<br>
+                <strong>Time Frame:</strong> 1 Hour &amp; 30 Minutes (90 Minutes)<br>
+                <strong>Topic:</strong> Module 6: Management of Instruction (Planning &amp; Congruence)
+              </p>
+              <h4 style="color: var(--color-oak-dark); margin-bottom: 0.4rem; font-size: clamp(1.2rem, 1.9vw, 1.6rem);">I. Objectives</h4>
+              <ul style="padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: clamp(1.1rem, 1.8vw, 1.45rem);">
+                <li class="classroom-desc">Explain the importance and purposes of instructional planning.</li>
+                <li class="classroom-desc">Apply the Rule of Congruence to align objectives, methods, and evaluation.</li>
+                <li class="classroom-desc">Compare Brief, Semi-Detailed, and Detailed lesson plans.</li>
+              </ul>
+              <h4 style="color: var(--color-oak-dark); margin-top: 0.8rem; margin-bottom: 0.4rem; font-size: clamp(1.2rem, 1.9vw, 1.6rem);">II. Subject Matter</h4>
+              <p class="classroom-desc" style="font-size: clamp(1.1rem, 1.8vw, 1.45rem);">
+                <strong>Reference:</strong> GEE-PMT Module 6 Handout<br>
+                <strong>Materials:</strong> Chalkboard slides, Congruence Wheel diagram, quiz templates.
+              </p>
+            </div>
+            
+            <div class="classroom-card" style="padding: 1.5rem; margin-bottom: 0; max-height: 48vh; overflow-y: auto;">
+              <h3 style="color: var(--color-green); margin-bottom: 0.5rem; font-size: clamp(1.3rem, 2.2vw, 1.8rem);">👣 III. Learning Procedures (90 Mins)</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; font-size: clamp(1.1rem, 1.8vw, 1.45rem);">
+                <li class="classroom-desc">
+                  <strong>A. Routines &amp; Schema (15 mins):</strong> Desk alignment check, daily prayer, checking attendance, and short schema activation review.
+                </li>
+                <li class="classroom-desc">
+                  <strong>B. Motivation &amp; Reflection (10 mins):</strong> Ask: *"What happens if a teacher conducts a session without any roadmap?"*
+                </li>
+                <li class="classroom-desc">
+                  <strong>C. Lesson Proper &amp; Discussion (40 mins):</strong>
+                  <ul style="padding-left: 1.2rem; margin-top: 0.3rem; display: flex; flex-direction: column; gap: 0.2rem;">
+                    <li>Discuss the purposes and definitions of instruction planning.</li>
+                    <li>Demonstrate Objectives &amp; Assessment alignment on the Congruence Wheel.</li>
+                    <li>Contrast Brief vs. Semi-Detailed vs. Detailed (DLP) layouts.</li>
+                    <li>Formulate SMART goals in Cognitive, Affective, and Psychomotor domains.</li>
+                  </ul>
+                </li>
+                <li class="classroom-desc">
+                  <strong>D. Alignment Practice (15 mins):</strong> Students perform group alignment exercises mapping objectives to methods and evaluation types.
+                </li>
+                <li class="classroom-desc">
+                  <strong>E. Evaluation &amp; Wrap-Up (10 mins):</strong> Administer 10-Item Identification Quiz and discuss homework/assignment parameters.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- NAVIGATION BAR AT BOTTOM -->
+  <footer class="nav-bar">
+    <div class="shortcuts-legend">
+      Shortcuts: <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd>
+    </div>
+    
+    <div class="nav-indicators" id="nav-indicators-container">
+      <!-- Indicators populated dynamically -->
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prev-btn" onclick="navigateSlide(-1)" aria-label="Previous Slide">
+        <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+      </button>
+      <button class="nav-btn" id="next-btn" onclick="navigateSlide(1)" aria-label="Next Slide">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    /* PRESENTATION LOGIC STATE */
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const headerTitle = document.getElementById('slide-title-header');
+    const indicatorsContainer = document.getElementById('nav-indicators-container');
+
+    const slideTitles = [
+      "GEE-PMT Module 6 // Welcome Page",
+      "Course Outline // Lesson Roadmap",
+      "Part 1: Foundations of Instructional Planning // Troy",
+      "Part 1: Guided Reflection // Troy",
+      "Part 1: Definition & Purposes // Troy",
+      "Part 2: Rule of Congruence // Emman",
+      "Part 2: Horizons of Planning // Emman",
+      "Part 3: Formats & Comparisons // Esteban",
+      "Part 3: DLP Columns Script // Esteban",
+      "Part 3: 6 Core Components // Esteban",
+      "Part 4: Structural Framework // Urie",
+      "Part 4: Flow of Learning Activities // Urie",
+      "Part 4: Teacher Prerequisites // Urie",
+      "Part 5: SMART Objectives Criteria // Balicao",
+      "Part 5: The Three Learning Domains // Balicao",
+      "Part 6: Action Verbs Taxonomy Grid // JM",
+      "Part 6: Interactive Verbs Finder // JM",
+      "Part 7: Case Study Setup // Urbano",
+      "Part 7: Case Study Prompt Carousel // Urbano",
+      "Lesson Evaluation Quiz // All Members",
+      "Lesson Plan Example // All Members"
+    ];
+
+    /* INITIALIZE NAV INDICATORS */
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = `indicator-dot ${idx === 0 ? 'active' : ''}`;
+      dot.addEventListener('click', () => jumpToSlide(idx));
+      indicatorsContainer.appendChild(dot);
+    });
+
+    const indicatorDots = document.querySelectorAll('.indicator-dot');
+
+    function updateNavUI() {
+      // Toggle slide visibility
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlideIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update dots
+      indicatorDots.forEach((dot, idx) => {
+        if (idx === currentSlideIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      // Update top status bar title
+      headerTitle.textContent = slideTitles[currentSlideIndex];
+
+      // Disable/enable nav buttons
+      document.getElementById('prev-btn').style.opacity = currentSlideIndex === 0 ? '0.4' : '1';
+      document.getElementById('prev-btn').style.pointerEvents = currentSlideIndex === 0 ? 'none' : 'auto';
+      document.getElementById('next-btn').style.opacity = currentSlideIndex === slides.length - 1 ? '0.4' : '1';
+      document.getElementById('next-btn').style.pointerEvents = currentSlideIndex === slides.length - 1 ? 'none' : 'auto';
+    }
+
+    function navigateSlide(direction) {
+      const targetIdx = currentSlideIndex + direction;
+      if (targetIdx >= 0 && targetIdx < slides.length) {
+        currentSlideIndex = targetIdx;
+        updateNavUI();
+      }
+    }
+
+    function jumpToSlide(idx) {
+      if (idx >= 0 && idx < slides.length) {
+        currentSlideIndex = idx;
+        updateNavUI();
+      }
+    }
+
+    /* KEYBOARD EVENT HANDLERS */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          navigateSlide(1);
+        }
+      } else if (e.key === 'ArrowLeft') {
+        if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          navigateSlide(-1);
+        }
+      }
+    });
+
+    // Support double click to advance slides
+    document.addEventListener('dblclick', (e) => {
+      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT' && !e.target.closest('.congruence-wheel') && !e.target.closest('.domain-card') && !e.target.closest('.timeline-container')) {
+        navigateSlide(1);
+      }
+    });
+
+    /* INTERACTIVE FEATURES */
+
+    // Slide 4: Save reflection to planner page (shows on Slide 5)
+    function saveReflection() {
+      const text = document.getElementById('reflection-text').value.trim();
+      const stickyNote = document.getElementById('reflection-sticky-note');
+      if (text) {
+        stickyNote.innerHTML = `<strong>📌 Saved Classroom Reflection:</strong> "${text}"`;
+        stickyNote.style.display = 'block';
+        alert('Reflection note pinned! Switch to Slide 5 to see it on the planner page.');
+      } else {
+        stickyNote.style.display = 'none';
+      }
+    }
+
+    // Slide 6: Congruence nodes info
+    const congruenceData = {
+      content: "Content: The curriculum subject matter outline that binds all activities, matching grade level standards.",
+      obj: "Objectives: Defines the behavioral outputs and learning goals. Must align directly with Assessments.",
+      strat: "Methods/Strategies: Selection of instructional procedures. Must directly enable students to reach Objectives.",
+      assess: "Assessments: The testing phase. Must measure the exact skill and cognitive level spelled out in the Objectives."
+    };
+
+    function showCongruence(key) {
+      const feedback = document.getElementById('congruence-feedback');
+      feedback.textContent = congruenceData[key];
+      
+      // Update styling on clicked node
+      document.querySelectorAll('.congruence-node, .congruence-center').forEach(node => {
+        node.style.borderColor = 'var(--color-chalk-white)';
+      });
+      if (key === 'content') {
+        document.querySelector('.congruence-center').style.transform = 'scale(1.05)';
+        setTimeout(() => {
+          document.querySelector('.congruence-center').style.transform = 'scale(1)';
+        }, 300);
+      } else {
+        document.querySelector(`.node-${key}`).style.borderColor = 'var(--color-green-chalk)';
+      }
+    }
+
+    // Slide 7: Timeline accordion toggle
+    function toggleTimeline(element) {
+      document.querySelectorAll('.timeline-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+    }
+
+    // Slide 9: Detailed Lesson Plan script cycles
+    const dlpPhases = {
+      intro: {
+        ta: '"Good morning, class! Let\'s check our seating alignments before opening our books."',
+        sa: '"Good morning, Teacher! (Students stand up and align desks immediately)"'
+      },
+      discussion: {
+        ta: '"Look closely at this sample sentence: \'She read the book.\' Is this simple or compound?"',
+        sa: '"Teacher, it is a simple sentence because it contains a single independent clause!"'
+      },
+      practice: {
+        ta: '"Now, join the two sentences on the board using a coordinating conjunction. You have 2 minutes."',
+        sa: '"(Students write actively in their workbooks: \'She read the book, and she wrote a summary.\')"'
+      }
+    };
+
+    function showDlpPhase(phase) {
+      const taText = document.getElementById('dlp-ta-text');
+      const saText = document.getElementById('dlp-sa-text');
+      taText.style.opacity = '0';
+      saText.style.opacity = '0';
+      setTimeout(() => {
+        taText.textContent = dlpPhases[phase].ta;
+        saText.textContent = dlpPhases[phase].sa;
+        taText.style.opacity = '1';
+        saText.style.opacity = '1';
+      }, 200);
+    }
+
+    // Slide 10: Badges descriptions
+    const badgeData = {
+      obj: "Objectives: Specific statement of what pupils should achieve after the classroom lesson.",
+      mot: "Motivation: Engaging preliminary hook designed to secure students' focus and spark schema.",
+      prop: "Lesson Proper: The core content structure, step-by-step lecture, Q&A, and direct practice.",
+      meth: "Varied Methods: Engaging strategies (interactive groups, worksheets) to address multiple learning styles.",
+      mat: "Varied Materials: Selecting chalkboard diagrams, visuals, audio guides, or workbook pages.",
+      ass: "Provision for Assignment: Reinforces class lesson at home, or previews tomorrow's incoming concepts."
+    };
+
+    function showBadgeInfo(key) {
+      const descBox = document.getElementById('badge-desc');
+      descBox.textContent = badgeData[key];
+      descBox.style.display = 'block';
+    }
+
+    // Slide 11: Anatomy Flowchart clicks
+    const flowchartData = {
+      obj: "Objectives: Tells exactly what pupils are expected to perform (SMART behaviors).",
+      sm: "Subject Matter: Details the content topic, reference textbooks, and necessary physical supplies.",
+      proc: "Learning Procedures: Outlines step-by-step classroom routines, motivations, drills, and tasks.",
+      eval: "Evaluation: Measures if objectives were achieved via a quiz, checkup, or task performance.",
+      assign: "Assignment: Extending the lesson via enrichment projects or home reading logs."
+    };
+
+    function showFlowDesc(key) {
+      const descBox = document.getElementById('flowchart-feedback');
+      descBox.textContent = flowchartData[key];
+      
+      // Update active styling
+      document.querySelectorAll('.flow-step').forEach(step => {
+        step.classList.remove('active');
+      });
+      
+      // Find matching step
+      const stepIdxMap = { obj: 0, sm: 1, proc: 2, eval: 3, assign: 4 };
+      document.querySelectorAll('.flow-step')[stepIdxMap[key]].classList.add('active');
+    }
+
+    // Slide 14: SMART detail clicks
+    const smartData = {
+      S: "Specific: 'Identify the subject noun in 5 sentences.' (Targets a clear, single skill).",
+      M: "Measurable: 'Score at least 8 out of 10 items in the quiz.' (Quantifiable outcome success).",
+      A: "Attainable: 'Construct a simple compound sentence in 5 minutes.' (Matches developmental level).",
+      R: "Result-oriented: 'Write a narrative script' rather than 'Look at the blackboard.' (Active output).",
+      T: "Time-bound: 'At the end of the 60-minute class period.' (Fixed milestone period)."
+    };
+
+    function showSmartDetail(letter) {
+      const feedback = document.getElementById('smart-feedback');
+      feedback.textContent = smartData[letter];
+    }
+
+    // Slide 15: Flipping cards
+    function flipCard(card) {
+      card.classList.toggle('flipped');
+    }
+
+    // Slide 16: Action Verbs Explorer tabs
+    function switchVerbTab(tabKey) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.verbs-grid').forEach(grid => grid.style.display = 'none');
+      
+      if (tabKey === 'cog') {
+        event.target.classList.add('active');
+        document.getElementById('verbs-cog').style.display = 'grid';
+      } else if (tabKey === 'aff') {
+        event.target.classList.add('active');
+        document.getElementById('verbs-aff').style.display = 'grid';
+      } else if (tabKey === 'psy') {
+        event.target.classList.add('active');
+        document.getElementById('verbs-psy').style.display = 'grid';
+      }
+    }
+
+    // Slide 17: Verb search function
+    const verbTaxonomyMap = [
+      { verb: "define", domain: "Cognitive", tier: "Remembering", elementId: "tier-rem" },
+      { verb: "list", domain: "Cognitive", tier: "Remembering", elementId: "tier-rem" },
+      { verb: "describe", domain: "Cognitive", tier: "Understanding", elementId: "tier-und" },
+      { verb: "explain", domain: "Cognitive", tier: "Understanding", elementId: "tier-und" },
+      { verb: "solve", domain: "Cognitive", tier: "Applying", elementId: "tier-app" },
+      { verb: "demonstrate", domain: "Cognitive", tier: "Applying", elementId: "tier-app" },
+      { verb: "differentiate", domain: "Cognitive", tier: "Analyzing", elementId: "tier-ana" },
+      { verb: "examine", domain: "Cognitive", tier: "Analyzing", elementId: "tier-ana" },
+      { verb: "critique", domain: "Cognitive", tier: "Evaluating", elementId: "tier-eva" },
+      { verb: "defend", domain: "Cognitive", tier: "Evaluating", elementId: "tier-eva" },
+      { verb: "compose", domain: "Cognitive", tier: "Creating", elementId: "tier-cre" },
+      { verb: "formulate", domain: "Cognitive", tier: "Creating", elementId: "tier-cre" },
+      
+      // Affective
+      { verb: "ask", domain: "Affective", tier: "Receiving", elementId: "tier-rec" },
+      { verb: "listen", domain: "Affective", tier: "Receiving", elementId: "tier-rec" },
+      { verb: "answer", domain: "Affective", tier: "Responding", elementId: "tier-res" },
+      { verb: "greet", domain: "Affective", tier: "Responding", elementId: "tier-res" },
+      { verb: "complete", domain: "Affective", tier: "Valuing", elementId: "tier-val" },
+      { verb: "join", domain: "Affective", tier: "Valuing", elementId: "tier-val" },
+      { verb: "arrange", domain: "Affective", tier: "Organizing", elementId: "tier-org" },
+      { verb: "integrate", domain: "Affective", tier: "Organizing", elementId: "tier-org" },
+      { verb: "act", domain: "Affective", tier: "Characterization", elementId: "tier-char" },
+      { verb: "verify", domain: "Affective", tier: "Characterization", elementId: "tier-char" },
+      
+      // Psychomotor
+      { verb: "align", domain: "Psychomotor", tier: "Imitation", elementId: "tier-imi" },
+      { verb: "follow", domain: "Psychomotor", tier: "Imitation", elementId: "tier-imi" },
+      { verb: "practice", domain: "Psychomotor", tier: "Manipulation", elementId: "tier-man" },
+      { verb: "repeat", domain: "Psychomotor", tier: "Manipulation", elementId: "tier-man" },
+      { verb: "independently", domain: "Psychomotor", tier: "Precision", elementId: "tier-pre" },
+      { verb: "errorlessly", domain: "Psychomotor", tier: "Precision", elementId: "tier-pre" },
+      { verb: "harmony", domain: "Psychomotor", tier: "Articulation", elementId: "tier-art" },
+      { verb: "coordination", domain: "Psychomotor", tier: "Articulation", elementId: "tier-art" },
+      { verb: "effortlessly", domain: "Psychomotor", tier: "Naturalization", elementId: "tier-nat" },
+      { verb: "routinely", domain: "Psychomotor", tier: "Naturalization", elementId: "tier-nat" }
+    ];
+
+    function searchVerbs() {
+      const query = document.getElementById('verb-search').value.toLowerCase().trim();
+      const feedback = document.getElementById('search-feedback');
+      
+      // Clear highlights
+      document.querySelectorAll('.verb-tier-card').forEach(card => {
+        card.classList.remove('highlighted');
+      });
+
+      if (!query) {
+        feedback.textContent = 'Type a verb to find its domain tier. (Try "Solve", "Critique", or "Align")';
+        return;
+      }
+
+      const match = verbTaxonomyMap.find(item => item.verb.includes(query) || query.includes(item.verb));
+      if (match) {
+        feedback.innerHTML = `🟢 Match Found!<br><strong>Verb:</strong> "${match.verb}"<br><strong>Domain:</strong> ${match.domain}<br><strong>Tier:</strong> ${match.tier}`;
+        
+        // Highlight tier card and switch tabs if needed
+        const card = document.getElementById(match.elementId);
+        if (card) {
+          card.classList.add('highlighted');
+          // Automatically switch tab view to match domain
+          if (match.domain === "Cognitive") switchVerbTab('cog');
+          else if (match.domain === "Affective") switchVerbTab('aff');
+          else if (match.domain === "Psychomotor") switchVerbTab('psy');
+        }
+      } else {
+        feedback.textContent = `❌ No direct match found for "${query}". Try another action verb like "Design", "Explain", or "Share".`;
+      }
+    }
+
+    // Slide 19: Case Study Prompts Cycle
+    let activeCaseIndex = 0;
+    const casePrompts = [
+      {
+        title: "Prompt 1: Actor Focus",
+        desc: "Image of Daniel Padilla acting in a drama series.",
+        ta: '"Class, look at this postcard of Daniel Padilla. Construct a Declarative Sentence."',
+        sa: '"Daniel Padilla is a famous actor from the Philippines."',
+        iconSvg: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg><span>Postcard</span>'
+      },
+      {
+        title: "Prompt 2: Hiking Trip",
+        desc: "Image of a group of friends hiking to a high mountaintop.",
+        ta: '"Here is a postcard of backpackers climbing. Give me an Exclamatory Sentence."',
+        sa: '"Wow, what a breathtaking view from the peak of this mountain!"',
+        iconSvg: '<svg viewBox="0 0 24 24"><path d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z"/></svg><span>Hiking</span>'
+      },
+      {
+        title: "Prompt 3: Rainy Day",
+        desc: "Image of torrential rain downpours in downtown Manila streets.",
+        ta: '"Look at this rainy day photo. Construct an Interrogative Sentence about the weather."',
+        sa: '"Did you remember to bring your umbrella before heading outside today?"',
+        iconSvg: '<svg viewBox="0 0 24 24"><path d="M12 2c-5.33 4.55-8 8.1-8 10.67C4 16.27 7.58 20 12 20s8-3.73 8-7.33C20 10.1 17.33 6.55 12 2zm0 15.67c-2.9 0-5.33-2.51-5.33-5 0-1.85 1.88-4.63 5.33-7.9 3.45 3.27 5.33 6.05 5.33 7.9 0 2.49-2.43 5-5.33 5z"/></svg><span>Rainy</span>'
+      },
+      {
+        title: "Prompt 4: Study Time",
+        desc: "Image of quiet children reading inside a library space.",
+        ta: '"Examine this study library room. Construct an Imperative Sentence to maintain focus."',
+        sa: '"Please read silently so others around you can study without noise."',
+        iconSvg: '<svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg><span>Library</span>'
+      }
+    ];
+
+    function cycleCaseStudy(direction) {
+      activeCaseIndex = (activeCaseIndex + direction + casePrompts.length) % casePrompts.length;
+      
+      const item = casePrompts[activeCaseIndex];
+      const imgPlaceholder = document.getElementById('case-study-image');
+      const title = document.getElementById('prompt-title');
+      const desc = document.getElementById('prompt-desc');
+      const taBubble = document.getElementById('case-ta-bubble');
+      const saBubble = document.getElementById('case-sa-bubble');
+
+      // Update contents
+      imgPlaceholder.innerHTML = item.iconSvg;
+      title.textContent = item.title;
+      desc.textContent = item.desc;
+
+      // Animate bubble text swaps
+      taBubble.style.opacity = '0';
+      saBubble.style.opacity = '0';
+      setTimeout(() => {
+        taBubble.textContent = item.ta;
+        saBubble.textContent = item.sa;
+        taBubble.style.opacity = '1';
+        saBubble.style.opacity = '1';
+      }, 150);
+    }
+
+    // Slide 20: 10-Item Identification Quiz
+    const quizQuestions = [
+      { q: "Daniel Padilla is a famous actor.", ans: "DC" },
+      { q: "Have you ever hiked to a mountaintop?", ans: "INC" },
+      { q: "Please write your lesson plans tonight.", ans: "IMC" },
+      { q: "Wow, what a beautiful chalkboard presentation!", ans: "EC" },
+      { q: "Stop talking while the teacher is speaking!", ans: "IMC" },
+      { q: "Philippine education thrives on innovation.", ans: "DC" },
+      { q: "Why must objectives be SMART?", ans: "INC" },
+      { q: "Hooray, we passed the PMT exam!", ans: "EC" },
+      { q: "Identify the three domains of learning.", ans: "IMC" },
+      { q: "Effective instructional planning saves classroom time.", ans: "DC" }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
+    function checkQuizAnswer(selectedAns) {
+      const currentQ = quizQuestions[currentQuizIndex];
+      const feedback = document.getElementById('quiz-feedback');
+      const btns = document.querySelectorAll('.quiz-opt-btn');
+
+      // Disable further clicks
+      btns.forEach(btn => btn.style.pointerEvents = 'none');
+
+      // Highlight correct & selected
+      btns.forEach(btn => {
+        const type = btn.textContent.match(/\(([^)]+)\)/)[1]; // Extract DC, INC, etc
+        if (type === currentQ.ans) {
+          btn.classList.add('correct');
+        } else if (type === selectedAns) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      if (selectedAns === currentQ.ans) {
+        quizScore++;
+        feedback.innerHTML = '🟢 Correct! Great job!';
+      } else {
+        feedback.innerHTML = `🔴 Incorrect! Correct answer is: ${currentQ.ans}`;
+      }
+
+      // Progress quiz
+      setTimeout(() => {
+        currentQuizIndex++;
+        if (currentQuizIndex < quizQuestions.length) {
+          resetQuizButtons();
+          showNextQuizQuestion();
+        } else {
+          showQuizResults();
+        }
+      }, 1500);
+    }
+
+    function resetQuizButtons() {
+      const btns = document.querySelectorAll('.quiz-opt-btn');
+      btns.forEach(btn => {
+        btn.classList.remove('correct', 'incorrect');
+        btn.style.pointerEvents = 'auto';
+      });
+      document.getElementById('quiz-feedback').textContent = 'Select an option.';
+    }
+
+    function showNextQuizQuestion() {
+      const item = quizQuestions[currentQuizIndex];
+      document.getElementById('quiz-progress').textContent = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+      document.getElementById('quiz-question-text').textContent = `"${item.q}"`;
+    }
+
+    function showQuizResults() {
+      const container = document.getElementById('quiz-body');
+      const passed = quizScore >= 7;
+      container.innerHTML = `
+        <div class="quiz-score-card">
+          <h3 class="chalk-title" style="border:none; margin:0; font-size: 2.8rem;">Quiz Finished!</h3>
+          <div class="quiz-score-num" style="font-size: 5rem;">${quizScore} / ${quizQuestions.length}</div>
+          <p class="chalk-large-text" style="font-size: 2.2rem; color: ${passed ? 'var(--color-green-chalk)' : 'var(--color-red-chalk)'}">
+            ${passed ? '🎉 Excellent! You passed the lesson check!' : '⚠️ Review the slides and try again!'}
+          </p>
+          <button class="btn-chalk" onclick="restartQuiz()" style="font-size: 1.8rem; margin-top: 1rem;">Retake Quiz</button>
+        </div>
+      `;
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      const container = document.getElementById('quiz-body');
+      
+      container.innerHTML = `
+        <div class="quiz-question-box">
+          <div class="quiz-num" id="quiz-progress">Question 1 of 10</div>
+          <div class="quiz-question" id="quiz-question-text">"Daniel Padilla is a famous actor."</div>
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="checkQuizAnswer('DC')">Declarative (DC)</button>
+          <button class="quiz-opt-btn" onclick="checkQuizAnswer('INC')">Interrogative (INC)</button>
+          <button class="quiz-opt-btn" onclick="checkQuizAnswer('IMC')">Imperative (IMC)</button>
+          <button class="quiz-opt-btn" onclick="checkQuizAnswer('EC')">Exclamatory (EC)</button>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback">Select an option.</div>
+      `;
+      resetQuizButtons();
+      showNextQuizQuestion();
+    }
+
+    // INITIALIZATION ON LOAD
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavUI();
+    });
+  </script>
+</body>
+</html>
