@@ -431,7 +431,7 @@
       border: 3px dashed var(--color-chalk-white);
       border-radius: 6px;
       font-family: var(--font-handwritten);
-      font-size: 1.95rem;
+      font-size: clamp(2rem, 3.2vw, 3.2rem);
       font-weight: 700;
       text-align: center;
       display: flex;
@@ -475,17 +475,18 @@
     }
 
     .timeline-content h4 {
-      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      font-size: clamp(1.6rem, 2.8vw, 2.4rem);
       font-weight: 700;
       color: var(--color-text-dark);
     }
 
     .timeline-content p {
-      font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+      font-size: clamp(1.35rem, 2.4vw, 2rem);
       color: #444;
       display: none;
       margin-top: 0.4rem;
       animation: slideDown 0.3s ease forwards;
+      font-weight: 600;
     }
 
     .timeline-item.active .timeline-content p {
@@ -591,7 +592,7 @@
 
     .domain-card {
       flex: 1;
-      height: 300px;
+      height: 380px;
       perspective: 1000px;
       cursor: pointer;
     }
@@ -657,19 +658,20 @@
     }
 
     .domain-back h4 {
-      font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+      font-size: clamp(1.8rem, 2.8vw, 2.4rem);
       color: var(--color-red);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
       border-bottom: 2.5px solid rgba(0,0,0,0.08);
       width: 100%;
-      padding-bottom: 0.3rem;
+      padding-bottom: 0.4rem;
       font-weight: 700;
     }
 
     .domain-back p {
-      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      font-size: clamp(1.45rem, 2.2vw, 1.85rem);
       line-height: 1.5;
-      font-weight: 500;
+      font-weight: 600;
+      color: #333;
     }
 
     /* ACTION VERBS TAXONOMY */
@@ -2283,7 +2285,7 @@
             ${passed ? '🎉 Excellent! You passed the lesson check!' : '⚠️ Review the slides and try again!'}
           </p>
           <button class="btn-chalk" onclick="restartQuiz()" style="font-size: 1.8rem; margin-top: 1rem;">Retake Quiz</button>
-        </div>
+        </div>O
       `;
     }
 
