@@ -2235,6 +2235,18 @@
       { q: "Effective instructional planning saves classroom time.", ans: "DC" }
     ];
 
+    function jumbleQuestions() {
+      for (let i = quizQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [quizQuestions[i], quizQuestions[j]] = [quizQuestions[j], quizQuestions[i]];
+      }
+    }
+
+    function initQuiz() {
+      jumbleQuestions();
+      showNextQuizQuestion();
+    }
+
     let currentQuizIndex = 0;
     let quizScore = 0;
 
@@ -2301,13 +2313,14 @@
             ${passed ? '🎉 Excellent! You passed the lesson check!' : '⚠️ Review the slides and try again!'}
           </p>
           <button class="btn-chalk" onclick="restartQuiz()" style="font-size: 1.8rem; margin-top: 1rem;">Retake Quiz</button>
-        </div>O
+        </div>
       `;
     }
 
     function restartQuiz() {
       currentQuizIndex = 0;
       quizScore = 0;
+      jumbleQuestions();
       const container = document.getElementById('quiz-body');
       
       container.innerHTML = `
@@ -2330,6 +2343,7 @@
     // INITIALIZATION ON LOAD
     document.addEventListener('DOMContentLoaded', () => {
       updateNavUI();
+      initQuiz();
     });
   </script>
 </body>
