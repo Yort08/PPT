@@ -129,6 +129,28 @@
       justify-content: flex-start;
       padding: 4vh 5vw 4vh 6vw;
       z-index: 1;
+      overflow-y: auto;
+    }
+
+    /* Styled themed scrollbar for slides */
+    .slide::-webkit-scrollbar {
+      width: 8px;
+    }
+    .slide::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .slide::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    .slide-planner::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    .slide::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .slide-planner::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.25);
     }
 
     .slide.active {
@@ -394,7 +416,7 @@
       z-index: 2;
       box-shadow: 0 0 15px rgba(0,0,0,0.4);
       cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .congruence-node {
@@ -412,12 +434,36 @@
       font-weight: 700;
       cursor: pointer;
       z-index: 3;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .congruence-node:hover, .congruence-center:hover {
       transform: scale(1.15);
       box-shadow: 0 0 18px rgba(255,255,255,0.4);
+    }
+
+    /* Focused State (Optical Focus) */
+    .congruence-node.focused {
+      transform: scale(1.25) !important;
+      border-color: var(--color-green-chalk) !important;
+      box-shadow: 0 0 25px rgba(46, 204, 113, 0.7) !important;
+      opacity: 1 !important;
+      z-index: 10;
+    }
+
+    .congruence-center.focused {
+      transform: scale(1.2) !important;
+      box-shadow: 0 0 25px rgba(255, 65, 54, 0.8) !important;
+      opacity: 1 !important;
+      z-index: 10;
+    }
+
+    /* Dimmed State when another node is focused */
+    .congruence-wheel.has-focus .congruence-node:not(.focused),
+    .congruence-wheel.has-focus .congruence-center:not(.focused) {
+      opacity: 0.35;
+      transform: scale(0.85);
+      box-shadow: none;
     }
 
     .congruence-node.node-obj { top: -50px; left: calc(50% - 50px); }
@@ -459,10 +505,24 @@
       transition: all 0.3s ease;
     }
 
-    .timeline-item:hover, .timeline-item.active {
+    .timeline-item:hover {
       transform: translateX(10px);
       background: #fdf6e2;
       border-left-color: var(--color-red);
+    }
+
+    .timeline-item.active {
+      transform: translateX(18px) scale(1.02);
+      background: #fdf6e2;
+      border-left-color: var(--color-red);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      opacity: 1 !important;
+    }
+
+    /* Dimmed State when another node is active */
+    .timeline-container.has-active .timeline-item:not(.active) {
+      opacity: 0.45;
+      transform: scale(0.97);
     }
 
     .timeline-num {
@@ -1977,22 +2037,27 @@
       const feedback = document.getElementById('congruence-feedback');
       feedback.textContent = congruenceData[key];
       
+      const wheel = document.querySelector('.congruence-wheel');
+      wheel.classList.add('has-focus');
+      
       // Update styling on clicked node
       document.querySelectorAll('.congruence-node, .congruence-center').forEach(node => {
-        node.style.borderColor = 'var(--color-chalk-white)';
+        node.classList.remove('focused');
       });
+      
       if (key === 'content') {
-        document.querySelector('.congruence-center').style.transform = 'scale(1.05)';
-        setTimeout(() => {
-          document.querySelector('.congruence-center').style.transform = 'scale(1)';
-        }, 300);
+        document.querySelector('.congruence-center').classList.add('focused');
       } else {
-        document.querySelector(`.node-${key}`).style.borderColor = 'var(--color-green-chalk)';
+        document.querySelector(`.node-${key}`).classList.add('focused');
       }
     }
 
     // Slide 7: Timeline accordion toggle
     function toggleTimeline(element) {
+      const container = document.querySelector('.timeline-container');
+      if (container) {
+        container.classList.add('has-active');
+      }
       document.querySelectorAll('.timeline-item').forEach(item => {
         item.classList.remove('active');
       });
