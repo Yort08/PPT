@@ -333,6 +333,27 @@
       z-index: 5;
     }
 
+    /* Optical Focus for chalkboard principles list */
+    .principle-item {
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+    }
+
+    ul.has-focus .principle-item:not(.focused) {
+      opacity: 0.35;
+      transform: scale(0.95);
+    }
+
+    .principle-item.focused {
+      transform: scale(1.08) translateX(15px) !important;
+      opacity: 1 !important;
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+
+    .principle-item.focused .classroom-badge {
+      box-shadow: 0 0 15px currentColor;
+    }
+
     .classroom-chalk-frame {
       border: 4px double var(--color-chalk-white);
       padding: 2rem;
@@ -1313,19 +1334,19 @@
             <h2 class="slide-title-chalk" style="margin-bottom: 2.5rem; width: 100%;">Principles of Instructional Planning</h2>
             
             <ul style="list-style: none; display: flex; flex-direction: column; gap: 2.5rem; width: 100%;">
-              <li style="display: flex; align-items: center; gap: 1.8rem;">
+              <li class="principle-item" onclick="togglePrincipleFocus(this)" style="display: flex; align-items: center; gap: 1.8rem;">
                 <span class="classroom-badge badge-chalk-red" style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); padding: 0.5rem 1rem; border-radius: 8px;">Principle 1</span>
                 <span class="chalk-large-text" style="font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; color: var(--color-chalk-white);">
                   Align Instructional Components
                 </span>
               </li>
-              <li style="display: flex; align-items: center; gap: 1.8rem;">
+              <li class="principle-item" onclick="togglePrincipleFocus(this)" style="display: flex; align-items: center; gap: 1.8rem;">
                 <span class="classroom-badge badge-chalk-green" style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); padding: 0.5rem 1rem; border-radius: 8px;">Principle 2</span>
                 <span class="chalk-large-text" style="font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; color: var(--color-green-chalk);">
                   Use Appropriate Teaching Strategies
                 </span>
               </li>
-              <li style="display: flex; align-items: center; gap: 1.8rem;">
+              <li class="principle-item" onclick="togglePrincipleFocus(this)" style="display: flex; align-items: center; gap: 1.8rem;">
                 <span class="classroom-badge badge-chalk-red" style="font-size: clamp(1.4rem, 2.5vw, 2.2rem); padding: 0.5rem 1rem; border-radius: 8px;">Principle 3</span>
                 <span class="chalk-large-text" style="font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; color: var(--color-chalk-white);">
                   Conduct Effective Assessment
@@ -2125,6 +2146,25 @@
       if (!isFocused) {
         card.classList.add('focused');
         container.classList.add('has-focus');
+      }
+    }
+
+    // Slide 6b: Principles list focus zoom
+    function togglePrincipleFocus(item) {
+      const list = item.closest('ul');
+      if (!list) return;
+      
+      const isFocused = item.classList.contains('focused');
+      
+      // Clear focus on all items in this list
+      list.querySelectorAll('.principle-item').forEach(li => {
+        li.classList.remove('focused');
+      });
+      list.classList.remove('has-focus');
+      
+      if (!isFocused) {
+        item.classList.add('focused');
+        list.classList.add('has-focus');
       }
     }
 
