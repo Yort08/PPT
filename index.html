@@ -274,6 +274,8 @@
       margin-bottom: 0.8rem;
       letter-spacing: 0.8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
     }
     
     .badge-red { background-color: var(--color-red); color: white; }
@@ -281,6 +283,27 @@
     .badge-oak { background-color: var(--color-oak); color: white; }
     .badge-chalk-red { border: 2.5px solid var(--color-red-chalk); color: var(--color-red-chalk); font-family: var(--font-handwritten); font-size: 2rem; }
     .badge-chalk-green { border: 2.5px solid var(--color-green-chalk); color: var(--color-green-chalk); font-family: var(--font-handwritten); font-size: 2rem; }
+
+    /* Optical Focus for Badges Container */
+    .badge-container {
+      transition: all 0.3s ease;
+    }
+
+    .badge-container.has-focus .classroom-badge:not(.focused) {
+      opacity: 0.45;
+      transform: scale(0.93);
+      box-shadow: none;
+    }
+
+    .classroom-badge.focused {
+      transform: scale(1.15) !important;
+      opacity: 1 !important;
+      z-index: 5;
+    }
+    
+    .classroom-badge.badge-red.focused { box-shadow: 0 0 20px rgba(255, 65, 54, 0.65) !important; }
+    .classroom-badge.badge-green.focused { box-shadow: 0 0 20px rgba(46, 204, 113, 0.65) !important; }
+    .classroom-badge.badge-oak.focused { box-shadow: 0 0 20px rgba(212, 163, 115, 0.65) !important; }
 
     /* BADGE DESCRIPTION BOX */
     .badge-desc-box {
@@ -1491,13 +1514,13 @@
             Click a classroom component badge to inspect its details:
           </p>
 
-          <div class="badge-container" style="justify-content: center; margin-bottom: 2rem;">
-            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('obj')">1. Objectives</span>
-            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mot')">2. Motivation</span>
-            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('prop')">3. Lesson Proper</span>
-            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('meth')">4. Varied Methods</span>
-            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mat')">5. Varied Materials</span>
-            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('ass')">6. Provision for Assignment</span>
+          <div class="badge-container" style="justify-content: center; margin-bottom: 2rem; display: flex; flex-wrap: wrap;">
+            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('obj', this)">1. Objectives</span>
+            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mot', this)">2. Motivation</span>
+            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('prop', this)">3. Lesson Proper</span>
+            <span class="classroom-badge badge-red badge-item" onclick="showBadgeInfo('meth', this)">4. Varied Methods</span>
+            <span class="classroom-badge badge-oak badge-item" onclick="showBadgeInfo('mat', this)">5. Varied Materials</span>
+            <span class="classroom-badge badge-green badge-item" onclick="showBadgeInfo('ass', this)">6. Provision for Assignment</span>
           </div>
           
           <div class="badge-desc-box" id="badge-desc" style="min-height: 100px; line-height: 1.5; padding: 1.5rem;">
@@ -2207,10 +2230,23 @@
       ass: "Provision for Assignment: Reinforces class lesson at home, or previews tomorrow's incoming concepts."
     };
 
-    function showBadgeInfo(key) {
+    function showBadgeInfo(key, badgeElement) {
       const descBox = document.getElementById('badge-desc');
       descBox.textContent = badgeData[key];
       descBox.style.display = 'block';
+      
+      const container = document.querySelector('.badge-container');
+      if (container) {
+        container.classList.add('has-focus');
+      }
+      
+      document.querySelectorAll('.classroom-badge').forEach(badge => {
+        badge.classList.remove('focused');
+      });
+      
+      if (badgeElement) {
+        badgeElement.classList.add('focused');
+      }
     }
 
     // Slide 11: Anatomy Flowchart clicks
