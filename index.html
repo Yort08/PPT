@@ -310,12 +310,27 @@
       border: 1px solid rgba(0,0,0,0.08);
       padding: 2rem;
       margin-bottom: 1.5rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
     }
 
     .classroom-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+    }
+
+    /* Optical Focus for Card Grids */
+    .classroom-grid-2.has-focus .classroom-card:not(.focused) {
+      opacity: 0.45;
+      transform: scale(0.96);
+      box-shadow: none;
+    }
+
+    .classroom-card.focused {
+      transform: scale(1.08) translateY(-5px) !important;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.14) !important;
+      opacity: 1 !important;
+      z-index: 5;
     }
 
     .classroom-chalk-frame {
@@ -1233,7 +1248,7 @@
           <h2 class="slide-title-planner">What is Planning?</h2>
           <div class="planner-subtitle">Instructor: Troy // Definition & Purposes</div>
           <div class="classroom-grid-2">
-            <div class="classroom-card">
+            <div class="classroom-card" onclick="toggleCardFocus(this)">
               <h3 style="color: var(--color-oak-dark); margin-bottom: 0.8rem; font-size: 1.4rem;">🗺️ Roadmap & Visualization</h3>
               <p class="classroom-desc" style="margin-bottom: 0.5rem;">
                 Acts as an <strong>instructional roadmap</strong> keeping targets in absolute focus.
@@ -1242,7 +1257,7 @@
                 Allows teachers to <strong>visualize classroom events</strong> and anticipate student barriers beforehand.
               </p>
             </div>
-            <div class="classroom-card">
+            <div class="classroom-card" onclick="toggleCardFocus(this)">
               <h3 style="color: var(--color-green); margin-bottom: 0.8rem; font-size: 1.4rem;">⏱️ Resource & Curriculum Alignment</h3>
               <p class="classroom-desc" style="margin-bottom: 0.5rem;">
                 Enables effective <strong>time management</strong>, budgeting minutes to prevent classroom rushing.
@@ -2063,6 +2078,25 @@
         item.classList.remove('active');
       });
       element.classList.add('active');
+    }
+
+    // Slide 5: Card focus zoom
+    function toggleCardFocus(card) {
+      const container = card.closest('.classroom-grid-2');
+      if (!container) return;
+      
+      const isFocused = card.classList.contains('focused');
+      
+      // Clear focus on all cards in this grid
+      container.querySelectorAll('.classroom-card').forEach(c => {
+        c.classList.remove('focused');
+      });
+      container.classList.remove('has-focus');
+      
+      if (!isFocused) {
+        card.classList.add('focused');
+        container.classList.add('has-focus');
+      }
     }
 
     // Slide 9: Detailed Lesson Plan script cycles
