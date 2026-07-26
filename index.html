@@ -377,6 +377,26 @@
       box-shadow: 0 0 15px currentColor;
     }
 
+    /* Optical Focus for SMART Objectives List */
+    .smart-item {
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    ul.smart-list.has-focus .smart-item:not(.focused) {
+      opacity: 0.35;
+      transform: scale(0.95);
+    }
+
+    .smart-item.focused {
+      transform: scale(1.08) translateX(12px) !important;
+      opacity: 1 !important;
+      text-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+
+    .smart-item.focused .classroom-badge {
+      box-shadow: 0 0 15px currentColor;
+    }
+
     .classroom-chalk-frame {
       border: 4px double var(--color-chalk-white);
       padding: 2rem;
@@ -1615,20 +1635,20 @@
               <p class="chalk-large-text" style="color: var(--color-green-chalk); margin-bottom: 1.5rem;">
                 Click each letter to display concrete classroom examples:
               </p>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem;">
-                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('S')">
+              <ul class="smart-list" style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem;">
+                <li class="chalk-large-text smart-item" style="cursor: pointer;" onclick="showSmartDetail('S', this)">
                   <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">S</span> Specific
                 </li>
-                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('M')">
+                <li class="chalk-large-text smart-item" style="cursor: pointer;" onclick="showSmartDetail('M', this)">
                   <span class="classroom-badge badge-chalk-green" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">M</span> Measurable
                 </li>
-                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('A')">
+                <li class="chalk-large-text smart-item" style="cursor: pointer;" onclick="showSmartDetail('A', this)">
                   <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">A</span> Attainable
                 </li>
-                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('R')">
+                <li class="chalk-large-text smart-item" style="cursor: pointer;" onclick="showSmartDetail('R', this)">
                   <span class="classroom-badge badge-chalk-green" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">R</span> Result-oriented
                 </li>
-                <li class="chalk-large-text" style="cursor: pointer;" onclick="showSmartDetail('T')">
+                <li class="chalk-large-text smart-item" style="cursor: pointer;" onclick="showSmartDetail('T', this)">
                   <span class="classroom-badge badge-chalk-red" style="padding: 0.2rem 0.6rem; margin-right: 0.5rem;">T</span> Time-bound
                 </li>
               </ul>
@@ -2281,9 +2301,20 @@
       T: "Time-bound: 'At the end of the 60-minute class period.' (Fixed milestone period)."
     };
 
-    function showSmartDetail(letter) {
+    function showSmartDetail(letter, element) {
       const feedback = document.getElementById('smart-feedback');
       feedback.textContent = smartData[letter];
+      
+      const list = element.closest('.smart-list');
+      if (list) {
+        list.classList.add('has-focus');
+      }
+      
+      list.querySelectorAll('.smart-item').forEach(item => {
+        item.classList.remove('focused');
+      });
+      
+      element.classList.add('focused');
     }
 
     // Slide 15: Flipping cards
